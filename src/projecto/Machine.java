@@ -34,12 +34,14 @@ public class Machine extends SimProcess {
                 hold(new TimeSpan(myModel.getServiceTime(job.getJobType(), ws), TimeUnit.MINUTES));
                 busy = false;
             } else {
-                if(myModel.workstations.get(ws).getJobQueue().isEmpty()) {
+                if(myModel.getWorkstation(ws).getJobQueue().isEmpty()) {
                     passivate();
                 } else {
-                    job = myModel.workstations.get(ws).getJobQueue().first();
-                    myModel.workstations.get(ws).getJobQueue().remove(job);
+                    job = myModel.getWorkstation(ws).getJobQueue().first();
+                    myModel.getWorkstation(ws).getJobQueue().remove(job);
                     busy = true;
+                    //TODO hold tempo de execução
+                    //TODO meter na queue agv
                 }
             }
         }

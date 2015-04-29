@@ -5,18 +5,14 @@ import desmoj.core.dist.*;
 import java.util.ArrayList;
 
 public class Process extends Model{
-
-    //Arrival time for the next job
-    private ContDistExponential jobArrivalTime;
-    //Draw a service time for a truck. TIme needed by the VC to fetch and lad the container onto the truck
-    //Waiting queue to represent the parking arear for the trucks
-    protected ProcessQueue<Job> jobQueue;
-    //Wainting queue to represent the AVG
-    protected AutoGuidedVehicle agv;
-    //protected ProcessQueue<AutVehicle> idleAVGQueue;
-    protected ArrayList<Workstation> workstations;
     
-    public Process(Model model, String string, boolean bln, boolean bln1) {
+    private ContDistExponential jobArrivalTime;
+    private AutoGuidedVehicle agv;
+    private JobGenerator ioStation;
+    private ArrayList<Workstation> workstations;
+    private boolean getBackToIO;
+    
+    public Process(Model model, String string, boolean bln, boolean bln1, boolean getBackToIO) {
         super(model, string, bln, bln1);
         
         workstations.add(new Workstation(model, "Workstation ", true, true, 3, 0));
@@ -24,6 +20,7 @@ public class Process extends Model{
         workstations.add(new Workstation(model, "Workstation ", true, true, 4, 2));
         workstations.add(new Workstation(model, "Workstation ", true, true, 4, 3));
         workstations.add(new Workstation(model, "Workstation ", true, true, 1, 4));
+        this.getBackToIO = getBackToIO;
     }
     
     public double getServiceTime(int jobType, int workstation) {
@@ -86,12 +83,19 @@ public class Process extends Model{
         return jobArrivalTime.sample();
     }
     
+    public AutoGuidedVehicle getAGV() {
+        return this.agv;
+    }
 
+    public Workstation getWorkstation(int station) {
+        return this.workstations.get(station);
+    }
+    
     @Override
     public String description() {
         return "A job shop consists of one I/O (in/out) station and five workstations (group of machines).";
     }
-
+    
     @Override
     public void doInitialSchedules() {
         agv = new AutoGuidedVehicle(this, "AVG", true);
@@ -100,7 +104,7 @@ public class Process extends Model{
         // or use TimeInstant to activate the process at an absolute point in time.
 
         // create and activate the truck generator process
-        JobGenerator generator = new JobGenerator(this,"JobArrival",false);
+        JobGenerator generator = new JobGenerator(this,"JobArrival",true);
         generator.activate(new TimeSpan(0));
     }
 
@@ -108,9 +112,6 @@ public class Process extends Model{
     public void init() {
         jobArrivalTime= new ContDistExponential(this, "JobArrivalTimeStream", 15.0, true, false);
         jobArrivalTime.setNonNegative(true);
-        jobQueue = new ProcessQueue<Job>(this, "Job Queue", true, true);
-
-        //idleAVGQueue = new ProcessQueue<AutVehicle>(this, "idle VC Queue", true, true);
     }
     
 }

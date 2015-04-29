@@ -2,6 +2,8 @@ package projecto;
 
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.SimProcess;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Job extends SimProcess{
@@ -9,20 +11,26 @@ public class Job extends SimProcess{
     *  useful shortcut to access the model's static components
     */
     private Process myModel;
+    private int currentStation;
     private int type; // 1, 2 or 3
+    private ArrayList<Integer> route;
     private final Random rand = new Random();
     
-    public Job(Model owner, String name, boolean showInTrace) {
+    public Job(Model model, String name, boolean showInTrace) {
 
-        super(owner, name, showInTrace);
+        super(model, name, showInTrace);
         // store a reference to the model this truck is associated with
-        myModel = (Process)owner;
+        myModel = (Process)model;
+        currentStation = -1;
         if(rand.nextDouble() <= 0.3){
             this.type = 1;
+            route = new ArrayList<>(Arrays.asList(2, 0, 1, 4));
         } else if( 0.3 < rand.nextDouble() && rand.nextDouble() <= 0.8) {
             this.type = 2;
+            route = new ArrayList<>(Arrays.asList(3, 1, 2));
         } else {
             this.type = 3;
+            route = new ArrayList<>(Arrays.asList(1, 4, 0, 3, 2));
         }
     }
     
@@ -30,32 +38,33 @@ public class Job extends SimProcess{
         return this.type;
     }
    
+    public int getNextStation() {
+        int x;
+        if (this.route.isEmpty()) {
+            return -1;
+        } else {
+            x = this.route.get(0);
+            this.route.remove(x);
+        }
+        return x;
+    }
+    
     @Override
     public void lifeCycle() {
      
-      // enter parking-lot
-      myModel.jobQueue.insert(this);
-      sendTraceNote("JobQueue length: "+ myModel.jobQueue.length());
-            // ... lifeCycle() continued
+      myModel.getAGV().insertInJobQueue(this);
+      sendTraceNote("AVG JobQueue length: "+ myModel.getAGV().getJobQueue().length());
 
-      // check if a VC is available
-      if (!myModel.agv.isBusy()) {
-         // get a reference to the first  VC from the idle VC queue
-         myModel.agv.setBusy(true);
+      
+      //Será preciso?
+      /*if (!myModel.getAGV().isBusy()) {
+         myModel.getAGV().setBusy(true);
 
-         // place the VC on the eventlist right after me,
-         // to ensure that I will be the next customer to get serviced
-         myModel.agv.activateAfter(this);
-      }
+         myModel.getAGV().activateAfter(this);
+      }*/
       
       passivate();
 
-      // Ok, I am back online again, which means I was serviced
-      // by the VC. I can leave the systems now.
-      // Luckily I don't have to do anything more than sending
-      // a message to the trace file, because the
-      // Java VM garbage collector will get the job done.
-      // Bye!
       sendTraceNote("Truck was serviced and leaves system.");
    }   
 }

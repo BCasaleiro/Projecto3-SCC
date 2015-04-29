@@ -12,14 +12,16 @@ public class Simulation {
     private Experiment exp;
     private AutoGuidedVehicle agv;
     private int runtime;
+    private boolean getBackToIO;
     
-    public Simulation(int runtime) {  
+    public Simulation(int runtime, boolean getBackToIO) {  
         this.runtime = runtime;
+        this.getBackToIO = getBackToIO;
     }
     
     public void start() {
         exp = new Experiment("ProcessExampleExperiment", TimeUnit.SECONDS, TimeUnit.MINUTES, null);
-        ioStation = new Process(null, "Simple Process-Oriented Van Carrier Model", true, true);
+        ioStation = new Process(null, "Simple Process-Oriented Van Carrier Model", true, true, getBackToIO);
         ioStation.connectToExperiment(exp);
         
         // set experiment parameters
