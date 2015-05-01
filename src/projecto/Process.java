@@ -111,8 +111,8 @@ public class Process extends Model{
         // or use TimeInstant to activate the process at an absolute point in time.
 
         // create and activate the truck generator process
-        JobGenerator generator = new JobGenerator(this,"IO Station",true);
-        generator.activate(new TimeSpan(0));
+        ioStation = new JobGenerator(this,"IO Station",true);
+        ioStation.activate(new TimeSpan(0));
     }
 
     @Override

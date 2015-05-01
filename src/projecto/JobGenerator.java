@@ -37,6 +37,8 @@ public class JobGenerator extends SimProcess{
 
          Job job = new Job(myModel, "Job", true);
 
+         this.jobQueue.insert(job);
+            System.out.println("inserido na job queue ");
          job.activateAfter(this);
 
          TimeSpan time = new TimeSpan(myModel.getJobArrivalTime(), TimeUnit.MINUTES);
