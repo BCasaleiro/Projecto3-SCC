@@ -8,19 +8,34 @@ import java.util.concurrent.TimeUnit;
 
 public class AutoGuidedVehicle extends SimProcess{
     
-    private Model myModel;
+    private Process myModel;
+    private boolean getBackToIO;
     private int currentStation;
     private float speed;
     private boolean busy;
     private ProcessQueue<Job> jobQueue;
+    private int routes[][];
     
-    public AutoGuidedVehicle(Model model, String name, boolean showInTrace) {
-      super(model, name, showInTrace);
-      // store a reference to the model this VC is associated with
-      myModel = model;
-      speed = (float)2.5/60;
-      jobQueue = new ProcessQueue<Job>(model, "AVG Job Queue", true, true);
-      currentStation = -1;
+    public AutoGuidedVehicle(Model model, String name, boolean showInTrace, boolean getBackToIO) {
+        super(model, name, showInTrace);
+        // store a reference to the model this VC is associated with
+        myModel = (Process)model;
+         speed = (float)2.5/60;
+        jobQueue = new ProcessQueue<Job>(model, "AGV Job Queue", true, true);
+        currentStation = 5;
+      
+         this.getBackToIO = getBackToIO;
+      
+        routes = new int[][]{{0, 45, 50, 90, 100, 135},
+                            {45, 0, 50, 100, 90, 135},
+                            {50, 50, 0, 50, 50, 90}, 
+                            {90, 100, 50, 0, 45, 50}, 
+                            {100, 90, 50, 45, 0, 50}, 
+                            {100, 90, 50, 45, 0, 50}, 
+                            {135, 135, 90, 50, 50, 0}        
+                            };
+        
+        System.out.println("AGV criado");
     }
 
     public boolean isBusy() {
@@ -49,24 +64,49 @@ public class AutoGuidedVehicle extends SimProcess{
     @Override
     public void lifeCycle() {
         Job nextJob;
+        int nextStation;
+        float travelTime;
         // the server is always on duty and will never stop working
-      while (true) {
-         // check if there is someone waiting
-         if (jobQueue.isEmpty()) {
-            passivate();
-         } else {
+        System.out.println("AGV activo, a entrar no loop infinito");
+        while (true) {
+             // check if there is someone waiting
+            if (jobQueue.isEmpty()) {
+                System.out.println("Job Queue do AGV vazia");
+                if(getBackToIO) {
+                    travelTime = (float)routes[currentStation][5]/speed;
+                    hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
+                    this.currentStation = 5;
+                }
+                
+                passivate();
+            } else {
+                nextJob = getFirstInQueue();
 
-            // YES, there is a job waiting
-
-            nextJob = getFirstInQueue();
-
-            //TODO mover o job para a workstation seguintes
-            
-            //hold(new TimeSpan(myModel.getServiceTime(), TimeUnit.MINUTES));
-
-            nextJob.activate(new TimeSpan(0.0));
-         }
-      }
+                nextStation = nextJob.getNextStation();
+                System.out.println("A receber job " + nextJob.id + " da estação " + nextJob.getCurrentStation());
+                if(currentStation != nextJob.getCurrentStation()) {
+                    System.out.println("A mover o AGV até à estação " + nextJob.getCurrentStation());
+                    travelTime = (float)routes[nextJob.getCurrentStation()][currentStation]/speed;                
+                    hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
+                }
+                
+                System.out.println("A mover o Job " + nextJob.id + " de " + nextJob.getCurrentStation() + " até à estação " + nextStation);
+                travelTime = (float)routes[nextJob.getCurrentStation()][nextStation]/speed;                
+                hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
+                
+                nextJob.setCurrentStation(nextStation);
+                this.currentStation = nextStation;
+                
+                if(nextStation != 5) {
+                    System.out.println("Job " + nextJob.id + " inserido na Job Queue de " + nextStation);
+                    myModel.getWorkstation(nextStation).insertInJobQueue(nextJob);
+                    myModel.getWorkstation(nextStation).activateAfter(this);
+                } else {
+                    System.out.println("Job entregue à I/O");
+                    nextJob.activate(new TimeSpan(0.0));
+                }
+            }
+        }
     }
     
 }

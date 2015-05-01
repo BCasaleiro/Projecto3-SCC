@@ -15,12 +15,11 @@ public class Process extends Model{
     public Process(Model model, String string, boolean bln, boolean bln1, boolean getBackToIO) {
         super(model, string, bln, bln1);
         
-        workstations.add(new Workstation(model, "Workstation ", true, true, 3, 0));
-        workstations.add(new Workstation(model, "Workstation ", true, true, 3, 1));
-        workstations.add(new Workstation(model, "Workstation ", true, true, 4, 2));
-        workstations.add(new Workstation(model, "Workstation ", true, true, 4, 3));
-        workstations.add(new Workstation(model, "Workstation ", true, true, 1, 4));
+        workstations = new ArrayList<>();
+        
         this.getBackToIO = getBackToIO;
+        
+        System.out.println("Modelo criado");
     }
     
     public double getServiceTime(int jobType, int workstation) {
@@ -98,7 +97,11 @@ public class Process extends Model{
     
     @Override
     public void doInitialSchedules() {
-        agv = new AutoGuidedVehicle(this, "AVG", true);
+        for (int i = 0; i < workstations.size(); i++) {
+            workstations.get(i).activate(new TimeSpan(0));
+        }
+        
+        agv = new AutoGuidedVehicle(this, "AGV", true, getBackToIO);
         agv.activate(new TimeSpan(0));
         // Use TimeSpan to activate a process after a span of time relative to actual simulation time,
         // or use TimeInstant to activate the process at an absolute point in time.
@@ -112,6 +115,13 @@ public class Process extends Model{
     public void init() {
         jobArrivalTime= new ContDistExponential(this, "JobArrivalTimeStream", 15.0, true, false);
         jobArrivalTime.setNonNegative(true);
+        
+        
+        workstations.add(new Workstation(this, "Workstation ", true, true, 3, 0));
+        workstations.add(new Workstation(this, "Workstation ", true, true, 3, 1));
+        workstations.add(new Workstation(this, "Workstation ", true, true, 4, 2));
+        workstations.add(new Workstation(this, "Workstation ", true, true, 4, 3));
+        workstations.add(new Workstation(this, "Workstation ", true, true, 1, 4));
     }
     
 }
