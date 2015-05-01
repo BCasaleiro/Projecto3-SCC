@@ -11,6 +11,7 @@ public class Process extends Model{
     private JobGenerator ioStation;
     private ArrayList<Workstation> workstations;
     private boolean getBackToIO;
+    private ArrayList<ArrayList<ContDistErlang>> serviceTimeArrayList;
     
     public Process(Model model, String string, boolean bln, boolean bln1, boolean getBackToIO) {
         super(model, string, bln, bln1);
@@ -18,6 +19,11 @@ public class Process extends Model{
         workstations = new ArrayList<>();
         
         this.getBackToIO = getBackToIO;
+        
+        this.serviceTimeArrayList = new ArrayList<> ();
+        this.serviceTimeArrayList.add(new ArrayList<>());
+        this.serviceTimeArrayList.add(new ArrayList<>());
+        this.serviceTimeArrayList.add(new ArrayList<>());
         
         System.out.println("Modelo criado");
     }
@@ -28,47 +34,35 @@ public class Process extends Model{
             case 1:
                 switch(workstation) {
                     case 2:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(0).get(0).sample();
                     case 0:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 36, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(0).get(1).sample();
                     case 1:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 51, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(0).get(2).sample();
                     case 4:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(0).get(3).sample();
                 }
             case 2:
                 switch(workstation) {
                     case 3:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 66, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(1).get(0).sample();
                     case 0:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 48, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(1).get(1).sample();
                     case 2:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 45, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(1).get(2).sample();
                 }
             case 3:
                 switch(workstation) {
                     case 1:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 72, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(2).get(0).sample();
                     case 4:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 15, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(2).get(1).sample();
                     case 0:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 42, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(2).get(2).sample();
                     case 3:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 54, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(2).get(3).sample();
                     case 2:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 60, true, true);
-                        return serviceTime.sample();
+                        return serviceTimeArrayList.get(2).get(4).sample();
                 }
                 break;
             default:
@@ -120,6 +114,20 @@ public class Process extends Model{
         jobArrivalTime= new ContDistExponential(this, "JobArrivalTimeStream", 15, true, true);
         jobArrivalTime.setNonNegative(true);
         
+        serviceTimeArrayList.get(0).add(new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, true));
+        serviceTimeArrayList.get(0).add(new ContDistErlang(this, "ServiceTimeStream", 2, 36, true, true));
+        serviceTimeArrayList.get(0).add(new ContDistErlang(this, "ServiceTimeStream", 2, 51, true, true));
+        serviceTimeArrayList.get(0).add(new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, true));
+        
+        serviceTimeArrayList.get(1).add(new ContDistErlang(this, "ServiceTimeStream", 2, 66, true, true));
+        serviceTimeArrayList.get(1).add(new ContDistErlang(this, "ServiceTimeStream", 2, 48, true, true));
+        serviceTimeArrayList.get(1).add(new ContDistErlang(this, "ServiceTimeStream", 2, 45, true, true));
+        
+        serviceTimeArrayList.get(2).add(new ContDistErlang(this, "ServiceTimeStream", 2, 72, true, true));
+        serviceTimeArrayList.get(2).add(new ContDistErlang(this, "ServiceTimeStream", 2, 15, true, true));
+        serviceTimeArrayList.get(2).add(new ContDistErlang(this, "ServiceTimeStream", 2, 42, true, true));
+        serviceTimeArrayList.get(2).add(new ContDistErlang(this, "ServiceTimeStream", 2, 54, true, true));
+        serviceTimeArrayList.get(2).add(new ContDistErlang(this, "ServiceTimeStream", 2, 60, true, true));
         
         workstations.add(new Workstation(this, "Workstation ", true, true, 3, 0));
         workstations.add(new Workstation(this, "Workstation ", true, true, 3, 1));
