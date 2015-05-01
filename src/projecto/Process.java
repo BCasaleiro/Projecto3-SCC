@@ -113,7 +113,7 @@ public class Process extends Model{
 
     @Override
     public void init() {
-        jobArrivalTime= new ContDistExponential(this, "JobArrivalTimeStream", 15, true, false);
+        jobArrivalTime= new ContDistExponential(this, "JobArrivalTimeStream", 15, true, true);
         jobArrivalTime.setNonNegative(true);
         
         

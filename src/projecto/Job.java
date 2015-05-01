@@ -70,11 +70,11 @@ public class Job extends SimProcess{
         sendTraceNote("AGV JobQueue length: "+ myModel.getAGV().getJobQueue().length());
 
       
-      if (!myModel.getAGV().isBusy()) {
-         myModel.getAGV().setBusy(true);
+        if (!myModel.getAGV().isBusy()) {
+            myModel.getAGV().setBusy(true);
 
-         myModel.getAGV().activateAfter(this);
-      }
+            myModel.getAGV().activateAfter(this);
+        }
       
         passivate();
       

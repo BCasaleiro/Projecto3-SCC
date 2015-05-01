@@ -20,7 +20,7 @@ public class AutoGuidedVehicle extends SimProcess{
         super(model, name, showInTrace);
         // store a reference to the model this VC is associated with
         myModel = (Process)model;
-         speed = (float)2.5/60;
+        speed = (float)2.5*60;
         jobQueue = new ProcessQueue<Job>(model, "AGV Job Queue", true, true);
         currentStation = 5;
       
@@ -103,7 +103,7 @@ public class AutoGuidedVehicle extends SimProcess{
                     myModel.getWorkstation(nextStation).activateAfter(this);
                 } else {
                     System.out.println("Job entregue à I/O");
-                    nextJob.activate(new TimeSpan(0.0));
+                    nextJob.activateAfter(this);
                 }
             }
         }
