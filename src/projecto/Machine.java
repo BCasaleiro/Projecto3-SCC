@@ -47,6 +47,7 @@ public class Machine extends SimProcess {
                 sendTraceNote("Job");
                 hold(new TimeSpan(myModel.getServiceTime(job.getJobType(), ws), TimeUnit.MINUTES));
                 myModel.getAGV().insertInJobQueue(job);
+                myModel.getAGV().activateAfter(this);
                 System.out.println("Job " + job.id + " inserido na queue do AGV");
                 busy = false;
             }
