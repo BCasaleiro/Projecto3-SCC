@@ -28,46 +28,46 @@ public class Process extends Model{
             case 1:
                 switch(workstation) {
                     case 2:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, true);
                         return serviceTime.sample();
                     case 0:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 36, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 36, true, true);
                         return serviceTime.sample();
                     case 1:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 51, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 51, true, true);
                         return serviceTime.sample();
                     case 4:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 30, true, true);
                         return serviceTime.sample();
                 }
             case 2:
                 switch(workstation) {
                     case 3:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 66, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 66, true, true);
                         return serviceTime.sample();
                     case 0:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 48, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 48, true, true);
                         return serviceTime.sample();
                     case 2:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 45, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 45, true, true);
                         return serviceTime.sample();
                 }
             case 3:
                 switch(workstation) {
                     case 1:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 72, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 72, true, true);
                         return serviceTime.sample();
                     case 4:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 15, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 15, true, true);
                         return serviceTime.sample();
                     case 0:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 42, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 42, true, true);
                         return serviceTime.sample();
                     case 3:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 54, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 54, true, true);
                         return serviceTime.sample();
                     case 2:
-                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 60, true, false);
+                        serviceTime = new ContDistErlang(this, "ServiceTimeStream", 2, 60, true, true);
                         return serviceTime.sample();
                 }
                 break;
@@ -80,6 +80,10 @@ public class Process extends Model{
     
     public double getJobArrivalTime() {
         return jobArrivalTime.sample();
+    }
+    
+    public JobGenerator getIOStation () {
+        return this.ioStation;
     }
     
     public AutoGuidedVehicle getAGV() {

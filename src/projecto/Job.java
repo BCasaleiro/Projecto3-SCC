@@ -65,7 +65,8 @@ public class Job extends SimProcess{
     
     @Override
     public void lifeCycle() {
-     
+        myModel.getIOStation().insertInJobQueue(this);
+        
         myModel.getAGV().insertInJobQueue(this);
         myModel.getAGV().activateAfter(this);
         

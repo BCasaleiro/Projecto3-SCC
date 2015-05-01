@@ -90,6 +90,10 @@ public class AutoGuidedVehicle extends SimProcess{
                     hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
                 }
                 
+                if(nextJob.getCurrentStation() == 5) {
+                    myModel.getIOStation().getJobQueue().remove(nextJob);
+                }
+                
                 System.out.println("A mover o Job " + nextJob.id + " de " + nextJob.getCurrentStation() + " até à estação " + nextStation);
                 travelTime = (float)routes[nextJob.getCurrentStation()][nextStation]/speed;                
                 hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
