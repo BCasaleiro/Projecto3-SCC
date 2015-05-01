@@ -67,6 +67,8 @@ public class Job extends SimProcess{
     public void lifeCycle() {
      
         myModel.getAGV().insertInJobQueue(this);
+        myModel.getAGV().activateAfter(this);
+        
         sendTraceNote("AGV JobQueue length: "+ myModel.getAGV().getJobQueue().length());
 
       

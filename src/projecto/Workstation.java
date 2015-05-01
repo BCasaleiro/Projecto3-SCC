@@ -46,7 +46,9 @@ public class Workstation extends SimProcess{
         
         while(true) {
             for (int i = 0; i < machines.size(); i++) {
-                machines.get(i).activate(new TimeSpan(0.0));
+                if(!machines.get(i).isBusy()) {    
+                    machines.get(i).activate(new TimeSpan(0.0));
+                }
             }
         
             passivate();

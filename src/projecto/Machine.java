@@ -31,7 +31,8 @@ public class Machine extends SimProcess {
 
     @Override
     public void lifeCycle() {
-        
+        TimeSpan time;
+        double nextErlang;
         System.out.println("Máquina activa da estação " + ws);
         
         while (true) {
@@ -42,10 +43,13 @@ public class Machine extends SimProcess {
                 job = myModel.getWorkstation(ws).getFirstInQueue();
                 busy = true;
                 
-                System.out.println("Máquina da estação " + ws + "a trabalhar no job " + job.id);
+                nextErlang = myModel.getServiceTime(job.getJobType(), ws);
                 
-                sendTraceNote("Job");
-                hold(new TimeSpan(myModel.getServiceTime(job.getJobType(), ws), TimeUnit.MINUTES));
+                time = new TimeSpan(nextErlang, TimeUnit.MINUTES);
+                
+                System.out.println("Máquina da estação " + ws + "a trabalhar no job " + job.id + " por " + nextErlang + " minutos");
+                
+                hold(time);
                 myModel.getAGV().insertInJobQueue(job);
                 myModel.getAGV().activateAfter(this);
                 System.out.println("Job " + job.id + " inserido na queue do AGV");
