@@ -14,9 +14,16 @@ public class Job extends SimProcess{
     public int id;
     private Process myModel;
     private int currentStation;
+    private int machine;
     private int type; // 1, 2 or 3
     private ArrayList<Integer> route;
     private final Random rand = new Random();
+    public double time;
+    public double timeAGV;
+    public double init;
+    public double end;
+    public double initAGV;
+    public double endAGV;
     
     public Job(Model model, String name, boolean showInTrace) {
 
@@ -38,6 +45,14 @@ public class Job extends SimProcess{
         this.id = id_geral++;
         
         System.out.println("Job " + id + " criado do tipo " + this.type);
+    }
+    
+    public void setMachine(int machine) {
+        this.machine = machine;
+    }
+    
+    public int getMachine() {
+        return this.machine;
     }
     
     public int getJobType() {
@@ -67,6 +82,9 @@ public class Job extends SimProcess{
     public void lifeCycle() {
         
         myModel.getAGV().insertInJobQueue(this);
+        
+        this.initAGV = this.presentTime().getTimeAsDouble();
+        
         myModel.getAGV().activateAfter(this);
         
         sendTraceNote("AGV JobQueue length: "+ myModel.getAGV().getJobQueue().length());
@@ -79,9 +97,20 @@ public class Job extends SimProcess{
         }
       
         passivate();
-      
+        
+        if(this.type == 1) {
+            myModel.delay1.update(this.time);
+            myModel.delayAGV1.update(this.timeAGV);
+        } else if(this.type == 2) {
+            myModel.delay2.update(time);
+            myModel.delayAGV2.update(this.timeAGV);
+        } else {
+            myModel.delay3.update(time);
+            myModel.delayAGV3.update(this.timeAGV);
+        }
+        
         System.out.println("Job a sair");
-      
+        
         sendTraceNote("Job has been serviced and is leaving.");
    }   
 }

@@ -19,15 +19,22 @@ public class Workstation extends SimProcess{
         System.out.println("Estação " + ws + " criada");
         
         for (int i = 0; i < nMachines; i++) {
-            machines.add(new Machine(model, "Machine", true, ws));
+            machines.add(new Machine(model, "Machine", true, ws, i));
         }
         
         jobQueue = new ProcessQueue<>(model, "Job Queue", true, true);
     }
     
+    public ArrayList<Machine> getMachines() {
+        return this.machines;
+    }
+    
     public Job getFirstInQueue() {
         Job aux = this.jobQueue.first();
         this.jobQueue.remove(aux);
+        
+        aux.end = presentTime().getTimeAsDouble();
+        aux.time += (aux.end - aux.init);
         
         return aux;
     }

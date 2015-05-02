@@ -2,6 +2,8 @@ package projecto;
 
 import desmoj.core.simulator.*;
 import desmoj.core.dist.*;
+import desmoj.core.statistic.Accumulate;
+import desmoj.core.statistic.Count;
 import java.util.ArrayList;
 
 public class Process extends Model{
@@ -12,6 +14,14 @@ public class Process extends Model{
     private ArrayList<Workstation> workstations;
     private boolean getBackToIO;
     private ArrayList<ArrayList<ContDistErlang>> serviceTimeArrayList;
+    
+    private Count distance;    
+    public Accumulate delay1;
+    public Accumulate delay2;
+    public Accumulate delay3;
+    public Accumulate delayAGV1;
+    public Accumulate delayAGV2;
+    public Accumulate delayAGV3;
     
     public Process(Model model, String string, boolean bln, boolean bln1, boolean getBackToIO) {
         super(model, string, bln, bln1);
@@ -26,6 +36,10 @@ public class Process extends Model{
         this.serviceTimeArrayList.add(new ArrayList<>());
         
         System.out.println("Modelo criado");
+    }
+    
+    public Count getDistance() {
+        return this.distance;
     }
     
     public double getServiceTime(int jobType, int workstation) {
@@ -134,6 +148,15 @@ public class Process extends Model{
         workstations.add(new Workstation(this, "Workstation ", true, true, 4, 2));
         workstations.add(new Workstation(this, "Workstation ", true, true, 4, 3));
         workstations.add(new Workstation(this, "Workstation ", true, true, 1, 4));
+        
+        distance = new Count(this, "AGV Distance", true, true);
+        
+        delay1 = new Accumulate(this, "Delay Job 1", true, true);
+        delay2 = new Accumulate(this, "Delay Job 2", true, true);
+        delay3 = new Accumulate(this, "Delay Job 3", true, true);
+        delayAGV1 = new Accumulate(this, "Delay AGV Job 1", true, true);
+        delayAGV2 = new Accumulate(this, "Delay AGV Job 2", true, true);
+        delayAGV3 = new Accumulate(this, "Delay AGV Job 3", true, true);
     }
     
 }

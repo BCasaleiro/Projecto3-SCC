@@ -50,6 +50,10 @@ public class AutoGuidedVehicle extends SimProcess{
         Job aux = this.jobQueue.first();
         this.jobQueue.remove(aux);
         
+        aux.endAGV = presentTime().getTimeAsDouble();
+        
+        aux.timeAGV += (aux.endAGV - aux.initAGV);
+        
         return aux;
     }
     
@@ -74,6 +78,7 @@ public class AutoGuidedVehicle extends SimProcess{
                 System.out.println("Job Queue do AGV vazia");
                 if(getBackToIO) {
                     travelTime = (float)routes[currentStation][5]/speed;
+                    myModel.getDistance().update(routes[currentStation][5]);
                     hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
                     this.currentStation = 5;
                 }
@@ -86,16 +91,20 @@ public class AutoGuidedVehicle extends SimProcess{
                 System.out.println("A receber job " + nextJob.id + " da estação " + nextJob.getCurrentStation());
                 if(currentStation != nextJob.getCurrentStation()) {
                     System.out.println("A mover o AGV até à estação " + nextJob.getCurrentStation());
-                    travelTime = (float)routes[nextJob.getCurrentStation()][currentStation]/speed;                
+                    travelTime = (float)routes[nextJob.getCurrentStation()][currentStation]/speed;
+                    myModel.getDistance().update(routes[nextJob.getCurrentStation()][currentStation]);
                     hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
                 }
                 
                 if(nextJob.getCurrentStation() == 5) {
                     myModel.getIOStation().getJobQueue().remove(nextJob);
+                } else {
+                    myModel.getWorkstation(nextJob.getCurrentStation()).getMachines().get(nextJob.getMachine()).activateAfter(this);
                 }
                 
                 System.out.println("A mover o Job " + nextJob.id + " de " + nextJob.getCurrentStation() + " até à estação " + nextStation);
-                travelTime = (float)routes[nextJob.getCurrentStation()][nextStation]/speed;                
+                travelTime = (float)routes[nextJob.getCurrentStation()][nextStation]/speed;
+                myModel.getDistance().update(routes[nextJob.getCurrentStation()][nextStation]);
                 hold(new TimeSpan(travelTime, TimeUnit.MINUTES));
                 
                 nextJob.setCurrentStation(nextStation);
@@ -104,6 +113,7 @@ public class AutoGuidedVehicle extends SimProcess{
                 if(nextStation != 5) {
                     System.out.println("Job " + nextJob.id + " inserido na Job Queue de " + nextStation);
                     myModel.getWorkstation(nextStation).insertInJobQueue(nextJob);
+                    nextJob.init = presentTime().getTimeAsDouble();
                     myModel.getWorkstation(nextStation).activateAfter(this);
                 } else {
                     System.out.println("Job entregue à I/O");
