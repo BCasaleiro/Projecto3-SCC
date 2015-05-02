@@ -3,7 +3,7 @@ package projecto;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.SimProcess;
 import desmoj.core.simulator.TimeSpan;
-import desmoj.core.statistic.Count;
+import desmoj.core.statistic.Aggregate;
 import java.util.concurrent.TimeUnit;
 
 public class Machine extends SimProcess {
@@ -12,11 +12,11 @@ public class Machine extends SimProcess {
     private boolean busy;
     private Job job;
     private int ws;
-    private Count machineWorking;
-    private Count machineBlocked;
+    private Aggregate machineWorking;
+    private Aggregate machineBlocked;
     private int nMachine;
     private double init;
-    private double end;
+    public double end;
 
     public Machine(Model model, String string, boolean bln, int ws, int nMachine) {
         super(model, string, bln);
@@ -26,8 +26,8 @@ public class Machine extends SimProcess {
         
         this.nMachine = nMachine;
         
-        this.machineWorking = new Count(model, "Working time machine of " + ws, true, true);
-        this.machineBlocked = new Count(model, "Blocked time machine of " + ws, true, true);
+        this.machineWorking = new Aggregate(model, "Working time machine of " + ws, true, true);
+        this.machineBlocked = new Aggregate(model, "Blocked time machine of " + ws, true, true);
         
         System.out.println("Maquina criada na estação " + ws);
     }
@@ -75,7 +75,7 @@ public class Machine extends SimProcess {
                 
                 end = presentTime().getTimeAsDouble();
                 
-                this.machineWorking.update((long)(end - init));
+                this.machineBlocked.update((double)(end - init));
                 
                 busy = false;
             }
